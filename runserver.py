@@ -1,5 +1,5 @@
 from Limit_order_and_market_order import online_trade
-#默认开始密码为start
+#默认仿真密钥为start
 #指令例子： sell limit 1300.0 10; buy market 100
 
 
@@ -9,4 +9,3 @@ bid = {1299.99:2, 1299.98:10, 1299.97:50, 1299.96:100, 1299.95:2}
 
 test = online_trade(bid,ask)
 test.emulation()
-
