@@ -1,9 +1,9 @@
 class online_trade:
-    def __init__(self, bid, ask):
+    def __init__(self, bid, ask):#初始化市场情况
         self.bid = bid
         self.ask = ask
 
-    def sell_limit(self, price, lots):
+    def sell_limit(self, price, lots):#sell limit order处理
         price_list = self.ask.keys()
         if price in price_list:
             self.ask[price] += lots
@@ -12,7 +12,7 @@ class online_trade:
         print(f'挂单ask {price} {lots}手')
         self.show_market()
 
-    def buy_limit(self, price, lots):
+    def buy_limit(self, price, lots):#buy limit order处理
         price_list = self.bid.keys()
         if price in price_list:
             self.bid[price] += lots
@@ -21,7 +21,7 @@ class online_trade:
         print(f'挂单bid {price} {lots}手')
         self.show_market()
 
-    def sell_market(self, lots):
+    def sell_market(self, lots):#sell market order处理
         num = lots
         stock = sorted(list(self.bid.keys()),reverse=True)
         total = 0
@@ -46,7 +46,7 @@ class online_trade:
         print(f"卖出 {num}手信息：{sell_list}")
         self.show_market()
 
-    def buy_market(self, lots):
+    def buy_market(self, lots):#buy market order处理
         num = lots
         stock = sorted(self.ask.keys())
         total = 0
@@ -71,15 +71,15 @@ class online_trade:
         print(f"买入{num}手信息：{buy_list}")
         self.show_market()
 
-    def get_wrong(self):
+    def get_wrong(self):#系统出错提醒，防止程序停止崩溃
         print('输入指令错误，请检查，或输入help查看指令')
 
-    def get_help(self):
+    def get_help(self):#帮助用户使用指令
         print(f'''交易指令: instruction(buy or sell) type(limit or market) (if limit price(int)) lots(int)
 退出指令: quit
 显示市场: show''')
 
-    def deal(self, word):
+    def deal(self, word):#综合处理交易函数
         instruction = word[0]
         if instruction == 'sell':
             if len(word) == 3:
@@ -98,12 +98,12 @@ class online_trade:
         else:
             raise Exception
 
-    def show_market(self):
+    def show_market(self):#排序需求并展示市场需求
         print(f"ask: {dict(sorted(self.ask.items(), key=lambda data: data[0]))}")
         print(f"bid: {dict(sorted(self.bid.items(), key=lambda data: data[0], reverse=True))}")
 
 
-    def emulation(self):
+    def emulation(self):#启动订单簿模拟的函数
         while True:
             word = input('输入仿真密钥: ')
             if word == 'start':
