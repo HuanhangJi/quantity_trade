@@ -26,50 +26,52 @@ class online_trade:
         stock = sorted(list(self.bid.keys()),reverse=True)
         total = 0
         for lot in stock:
-            total += lot
+            total += self.bid[lot]
         if lots > total:
             print(f"市场无{lots}手需求")
-        sell_list = []
-        for price in stock:
-            if self.bid[price] <= lots:
-                lots -= self.bid[price]
-                info = {'price':price, 'lots':self.bid[price]}
-                sell_list.append(info)
-                del self.bid[price]
-            else:
-                if lots == 0:
+        else:
+            sell_list = []
+            for price in stock:
+                if self.bid[price] <= lots:
+                    lots -= self.bid[price]
+                    info = {'price':price, 'lots':self.bid[price]}
+                    sell_list.append(info)
+                    del self.bid[price]
+                else:
+                    if lots == 0:
+                        break
+                    self.bid[price] -= lots
+                    info = {'price': price, 'lots': lots}
+                    sell_list.append(info)
                     break
-                self.bid[price] -= lots
-                info = {'price': price, 'lots': lots}
-                sell_list.append(info)
-                break
-        print(f"卖出 {num}手信息：{sell_list}")
-        self.show_market()
+            print(f"卖出 {num}手信息：{sell_list}")
+            self.show_market()
 
     def buy_market(self, lots):#buy market order处理
         num = lots
         stock = sorted(self.ask.keys())
         total = 0
         for lot in stock:
-            total += lot
+            total += self.ask[lot]
         if lots > total:
             print(f"市场无{lots}手供给")
-        buy_list = []
-        for price in stock:
-            if self.ask[price] <= lots:
-                lots -= self.ask[price]
-                info = {'price': price, 'lots': self.ask[price]}
-                buy_list.append(info)
-                del self.ask[price]
-            else:
-                if lots == 0:
+        else:
+            buy_list = []
+            for price in stock:
+                if self.ask[price] <= lots:
+                    lots -= self.ask[price]
+                    info = {'price': price, 'lots': self.ask[price]}
+                    buy_list.append(info)
+                    del self.ask[price]
+                else:
+                    if lots == 0:
+                        break
+                    self.ask[price] -= lots
+                    info = {'price': price, 'lots': lots}
+                    buy_list.append(info)
                     break
-                self.ask[price] -= lots
-                info = {'price': price, 'lots': lots}
-                buy_list.append(info)
-                break
-        print(f"买入{num}手信息：{buy_list}")
-        self.show_market()
+            print(f"买入{num}手信息：{buy_list}")
+            self.show_market()
 
     def get_wrong(self):#系统出错提醒，防止程序停止崩溃
         print('输入指令错误，请检查，或输入help查看指令')
