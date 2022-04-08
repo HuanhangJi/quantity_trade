@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from prettytable import PrettyTable
 
 class online_trade:
     def __init__(self, bid, ask):#初始化市场情况
@@ -41,10 +42,10 @@ class online_trade:
                     lots -= self.bid[price]
                     info = {'price':price, 'lots':self.bid[price]}
                     sell_list.append(info)
+                    del self.bid[price]
                     if lots == 0:
                         self.stock_price.append(price)
                         break
-                    del self.bid[price]
                 else:
                     self.stock_price.append(price)
                     self.bid[price] -= lots
@@ -69,10 +70,10 @@ class online_trade:
                     lots -= self.ask[price]
                     info = {'price': price, 'lots': self.ask[price]}
                     buy_list.append(info)
+                    del self.ask[price]
                     if lots == 0:
                         self.stock_price.append(price)
                         break
-                    del self.ask[price]
                 else:
                     self.stock_price.append(price)
                     self.ask[price] -= lots
@@ -110,10 +111,17 @@ class online_trade:
             raise Exception
 
     def show_market(self):#排序需求并展示市场需求
-        print(f"ask: {dict(sorted(self.ask.items(), key=lambda data: data[0]))}")
-        print(f"bid: {dict(sorted(self.bid.items(), key=lambda data: data[0], reverse=True))}")
+        table = PrettyTable(field_names=["price","lots"])
+        ask = dict(sorted(self.ask.items(), key=lambda data: data[0], reverse=True))
+        for item in ask.items():
+            table.add_row([item[0],item[1]])
+        table.add_row(['--------','---------'])
+        bid = dict(sorted(self.bid.items(), key=lambda data: data[0], reverse=True))
+        for item in bid.items():
+            table.add_row([item[0],item[1]])
+        print(table)
 
-    def show_stock(self):
+    def show_stock(self):#进行股价可视化
         stock_price = self.stock_price
         n = len(stock_price)
         trade = [i for i in range(n)]
@@ -132,13 +140,13 @@ class online_trade:
                     try:
                         word = input('输入指令: ')
                         word = word.split()
-                        if word[0] == 'help':
+                        if word[0] == 'help':#调出帮助指令
                             self.get_help()
-                        elif word[0] == 'quit':
+                        elif word[0] == 'quit':#推出程序
                             break
-                        elif word[0] == 'show_price':
+                        elif word[0] == 'show_price':#展示市场价格
                             self.show_market()
-                        elif word[0] == 'show_stock':
+                        elif word[0] == 'show_stock':#展示股价
                             self.show_stock()
                         else:
                             self.deal(word)
