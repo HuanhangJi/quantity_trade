@@ -1,7 +1,10 @@
+from matplotlib import pyplot as plt
+
 class online_trade:
     def __init__(self, bid, ask):#初始化市场情况
         self.bid = bid
         self.ask = ask
+        self.stock_price = [min(ask)]
 
     def sell_limit(self, price, lots):#sell limit order处理
         price_list = self.ask.keys()
@@ -10,6 +13,7 @@ class online_trade:
         else:
             self.ask[price] = lots
         print(f'挂单ask {price} {lots}手')
+        self.stock_price.append(self.stock_price[-1])
         self.show_market()
 
     def buy_limit(self, price, lots):#buy limit order处理
@@ -19,6 +23,7 @@ class online_trade:
         else:
             self.bid[price] = lots
         print(f'挂单bid {price} {lots}手')
+        self.stock_price.append(self.stock_price[-1])
         self.show_market()
 
     def sell_market(self, lots):#sell market order处理
@@ -36,10 +41,12 @@ class online_trade:
                     lots -= self.bid[price]
                     info = {'price':price, 'lots':self.bid[price]}
                     sell_list.append(info)
+                    if lots == 0:
+                        self.stock_price.append(price)
+                        break
                     del self.bid[price]
                 else:
-                    if lots == 0:
-                        break
+                    self.stock_price.append(price)
                     self.bid[price] -= lots
                     info = {'price': price, 'lots': lots}
                     sell_list.append(info)
@@ -62,10 +69,12 @@ class online_trade:
                     lots -= self.ask[price]
                     info = {'price': price, 'lots': self.ask[price]}
                     buy_list.append(info)
+                    if lots == 0:
+                        self.stock_price.append(price)
+                        break
                     del self.ask[price]
                 else:
-                    if lots == 0:
-                        break
+                    self.stock_price.append(price)
                     self.ask[price] -= lots
                     info = {'price': price, 'lots': lots}
                     buy_list.append(info)
@@ -104,6 +113,15 @@ class online_trade:
         print(f"ask: {dict(sorted(self.ask.items(), key=lambda data: data[0]))}")
         print(f"bid: {dict(sorted(self.bid.items(), key=lambda data: data[0], reverse=True))}")
 
+    def show_stock(self):
+        stock_price = self.stock_price
+        n = len(stock_price)
+        trade = [i for i in range(n)]
+        plt.plot(trade, stock_price)
+        plt.xlabel('trade times')
+        plt.ylabel('stock price')
+        plt.show()
+
 
     def emulation(self):#启动订单簿模拟的函数
         while True:
@@ -118,12 +136,15 @@ class online_trade:
                             self.get_help()
                         elif word[0] == 'quit':
                             break
-                        elif word[0] == 'show':
+                        elif word[0] == 'show_price':
                             self.show_market()
+                        elif word[0] == 'show_stock':
+                            self.show_stock()
                         else:
                             self.deal(word)
                     except:
                         self.get_wrong()
+                self.show_stock()
                 break
             else:
                 if word == 'quit':
